@@ -256,7 +256,8 @@ renders successfully end to end.
   misses a meaningful share of actual dropouts. This is a legitimate,
   common trade-off to acknowledge rather than a bug in this codebase.
 
-  # Project Workflow
+ 
+ ## Project Workflow
 
 Raw Dataset
 
@@ -302,7 +303,7 @@ Prediction System
 
 ---
 
-# Technologies Used
+## Technologies Used
 
 - Python
 - Google Colab
@@ -319,7 +320,7 @@ Prediction System
 
 ---
 
-# Developer
+## Developer
 
 Nagdir B. Muhadja
 
