@@ -1,0 +1,162 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Prediction | Student Dropout Prediction System{% endblock %}
+{% block page_title %}Dropout Risk Prediction{% endblock %}
+
+{% block page_content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="panel-title">Student Information</div>
+
+      <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <div class="form-section-title">Identity</div>
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label">{{ form.student_name.label }}</label>
+            {{ form.student_name }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ form.student_number.label }}</label>
+            {{ form.student_number }}
+          </div>
+        </div>
+
+        <div class="form-section-title">Demographics</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Age</label>
+            {{ form.age }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Gender</label>
+            {{ form.gender }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ form.family_income.label }}</label>
+            {{ form.family_income }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Department</label>
+            {{ form.department }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Year Level</label>
+            {{ form.semester }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Parental Education</label>
+            {{ form.parental_education }}
+          </div>
+        </div>
+
+        <div class="form-section-title">Academic Performance</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">{{ form.gpa.label }}</label>
+            {{ form.gpa }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ form.semester_gpa.label }}</label>
+            {{ form.semester_gpa }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ form.cgpa.label }}</label>
+            {{ form.cgpa }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.attendance_rate.label }}</label>
+            {{ form.attendance_rate }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.assignment_delay_days.label }}</label>
+            {{ form.assignment_delay_days }}
+          </div>
+        </div>
+
+        <div class="form-section-title">Lifestyle &amp; Environment</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">{{ form.study_hours_per_day.label }}</label>
+            {{ form.study_hours_per_day }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.stress_index.label }}</label>
+            {{ form.stress_index }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.travel_time_minutes.label }}</label>
+            {{ form.travel_time_minutes }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Internet Access</label>
+            {{ form.internet_access }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Part-time Job</label>
+            {{ form.part_time_job }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Scholarship</label>
+            {{ form.scholarship }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4 px-4">
+          <i class="bi bi-cpu me-1"></i> Run Prediction
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    {% if result %}
+    <div class="risk-result-box risk-{{ result.risk_level|lower }}">
+      <div class="text-uppercase" style="letter-spacing:1px;opacity:.85;">Predicted Dropout Risk</div>
+      <div class="probability">{{ result.record.dropout_probability_percent|floatformat:1 }}%</div>
+      <div class="fs-5 fw-semibold mt-1">
+        {% if result.risk_level == 'HIGH' %}High Risk
+        {% elif result.risk_level == 'MEDIUM' %}Medium Risk
+        {% else %}Low Risk
+        {% endif %}
+      </div>
+      <hr style="border-color:rgba(255,255,255,.3);">
+      <p class="mb-0" style="opacity:.9;">
+        {% if result.risk_level == 'HIGH' %}
+          This student shows strong warning signs. Recommend immediate academic counseling and intervention.
+        {% elif result.risk_level == 'MEDIUM' %}
+          This student shows some warning signs. Recommend monitoring and periodic check-ins.
+        {% else %}
+          This student shows a low likelihood of dropping out. Continue standard monitoring.
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="panel mt-4">
+      <div class="panel-title">Saved Record</div>
+      <p class="mb-1"><strong>Student:</strong> {{ result.record.student_name }}</p>
+      <p class="mb-1"><strong>Student No.:</strong> {{ result.record.student_number|default:"—" }}</p>
+      <p class="mb-0"><strong>Recorded:</strong> {{ result.record.created_at }}</p>
+      <a href="{% url 'history' %}" class="btn btn-sm btn-outline-primary mt-3">View in History</a>
+    </div>
+    {% else %}
+    <div class="panel">
+      <div class="panel-title"><i class="bi bi-info-circle me-1"></i> How this works</div>
+      <p class="text-muted mb-2">
+        Fill in the student's academic and demographic profile, then click
+        <strong>Run Prediction</strong>. The system engineers four derived
+        features (Academic Performance, Study Efficiency, Academic Risk,
+        Accessibility Score), scales all inputs the same way the training
+        data was scaled, and runs them through the trained Logistic
+        Regression model to estimate dropout probability.
+      </p>
+      <p class="text-muted mb-0">
+        Model accuracy: <strong>81.4%</strong> &middot; ROC AUC: <strong>0.818</strong>
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

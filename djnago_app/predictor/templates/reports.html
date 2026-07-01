@@ -1,0 +1,122 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Reports | Student Dropout Prediction System{% endblock %}
+{% block page_title %}Reports &amp; Analytics{% endblock %}
+
+{% block page_content %}
+<div class="row g-4 mb-4">
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div><h5>Accuracy</h5><h2>{{ model_metrics.accuracy }}%</h2></div>
+      <i class="bi bi-check2-circle card-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div><h5>Precision</h5><h2>{{ model_metrics.precision }}%</h2></div>
+      <i class="bi bi-bullseye card-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div><h5>Recall</h5><h2>{{ model_metrics.recall }}%</h2></div>
+      <i class="bi bi-search card-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div><h5>ROC AUC</h5><h2>{{ model_metrics.roc_auc }}%</h2></div>
+      <i class="bi bi-graph-up-arrow card-icon"></i>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-title">Overall Risk Distribution</div>
+      <canvas id="riskChart" height="240"></canvas>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-title">Average Dropout Probability by Department</div>
+      <canvas id="deptChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <div class="panel">
+      <div class="panel-title">Average Dropout Probability by Year Level</div>
+      <canvas id="semesterChart" height="120"></canvas>
+    </div>
+  </div>
+</div>
+
+{% if total == 0 %}
+<div class="alert alert-info mt-4">
+  No predictions have been recorded yet. Run some predictions on the
+  <a href="{% url 'prediction' %}">Prediction</a> page to populate these charts.
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+const riskData = {{ risk_chart|safe }};
+const deptData = {{ department_chart|safe }};
+const semesterData = {{ semester_chart|safe }};
+
+new Chart(document.getElementById('riskChart'), {
+  type: 'doughnut',
+  data: {
+    labels: riskData.labels,
+    datasets: [{
+      data: riskData.values,
+      backgroundColor: ['#2E7D32', '#F9A825', '#C62828'],
+      borderWidth: 0,
+    }]
+  },
+  options: { plugins: { legend: { position: 'bottom' } }, cutout: '65%' }
+});
+
+new Chart(document.getElementById('deptChart'), {
+  type: 'bar',
+  data: {
+    labels: deptData.labels,
+    datasets: [{
+      label: 'Avg. Dropout Probability (%)',
+      data: deptData.values,
+      backgroundColor: '#800000',
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, max: 100 } }
+  }
+});
+
+new Chart(document.getElementById('semesterChart'), {
+  type: 'line',
+  data: {
+    labels: semesterData.labels,
+    datasets: [{
+      label: 'Avg. Dropout Probability (%)',
+      data: semesterData.values,
+      borderColor: '#800000',
+      backgroundColor: 'rgba(128,0,0,.12)',
+      fill: true,
+      tension: .3,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, max: 100 } }
+  }
+});
+</script>
+{% endblock %}

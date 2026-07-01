@@ -1,0 +1,116 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Dashboard | Student Dropout Prediction System{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block page_content %}
+<h4 class="mb-1"><i class="bi bi-person-check-fill me-2" style="color:var(--secondary);"></i>Welcome back, {{ user.username }}</h4>
+<p class="text-muted mb-4">Here's what's happening with student dropout risk today.</p>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div>
+        <h5>Total Predictions</h5>
+        <h2>{{ total_predictions }}</h2>
+      </div>
+      <i class="bi bi-clipboard2-data card-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div>
+        <h5>High Risk</h5>
+        <h2>{{ high_risk }}</h2>
+      </div>
+      <i class="bi bi-exclamation-triangle-fill card-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div>
+        <h5>Low Risk</h5>
+        <h2>{{ low_risk }}</h2>
+      </div>
+      <i class="bi bi-shield-check card-icon"></i>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="dashboard-card">
+      <div>
+        <h5>Model Accuracy</h5>
+        <h2>{{ model_accuracy }}%</h2>
+      </div>
+      <i class="bi bi-cpu card-icon"></i>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="panel">
+      <div class="panel-title">Risk Distribution</div>
+      <canvas id="riskChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="panel-title d-flex justify-content-between align-items-center">
+        <span>Recent Predictions</span>
+        <a href="{% url 'history' %}" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+
+      {% if recent %}
+      <div class="table-responsive">
+        <table class="table table-borderless align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Department</th>
+              <th>Probability</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in recent %}
+            <tr>
+              <td>{{ r.student_name }}</td>
+              <td>{{ r.get_department_display }}</td>
+              <td>{{ r.dropout_probability_percent|floatformat:1 }}%</td>
+              <td><span class="badge risk-{{ r.risk_level|lower }}">{{ r.get_risk_level_display }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted mb-0">No predictions yet. Head to the <a href="{% url 'prediction' %}">Prediction</a> page to run your first one.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+const riskData = {{ risk_chart_data|safe }};
+new Chart(document.getElementById('riskChart'), {
+  type: 'doughnut',
+  data: {
+    labels: riskData.labels,
+    datasets: [{
+      data: riskData.values,
+      backgroundColor: ['#2E7D32', '#F9A825', '#C62828'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    plugins: { legend: { position: 'bottom' } },
+    cutout: '65%',
+  }
+});
+</script>
+{% endblock %}
