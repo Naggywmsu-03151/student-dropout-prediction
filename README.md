@@ -7,7 +7,7 @@ The Student Dropout Prediction System is a Machine Learning-based web applicatio
 
 ---
 
-# Project Objectives
+## Project Objectives
 
 The project aims to:
 
@@ -19,7 +19,7 @@ The project aims to:
 
 ---
 
-# Dataset Information
+## Dataset Information
 
 Dataset Name:
 
@@ -45,7 +45,7 @@ Dropout
 
 
 
-# Dataset Features
+## Dataset Features
 
 | Feature | Description |
 |----------|-------------|
@@ -72,7 +72,7 @@ Dropout
 ---
 
 
-# Feature Engineering
+## Feature Engineering
 
 The project includes:
 
@@ -85,7 +85,7 @@ The project includes:
 
 ---
 
-# Machine Learning Algorithms
+## Machine Learning Algorithms
 
 The following algorithms are evaluated:
 
@@ -97,7 +97,7 @@ The following algorithms are evaluated:
 
 ---
 
-# Performance Evaluation Metrics
+## Performance Evaluation Metrics
 
 The models are evaluated using:
 
@@ -143,7 +143,7 @@ student-dropout-prediction-system/
 └── db.sqlite3                  # Pre-seeded with 1 admin account + demo records
 
 
-# 2. Where the ML model came from
+## 2. Where the ML model came from
 
 This project's three notebooks are the ground truth for the pipeline
 re-implemented in `predictor/ml_utils.py`:
@@ -240,7 +240,7 @@ at-risk profile scores higher than a clearly healthy profile, login-required
 enforcement, and that every page (dashboard, prediction, history, reports)
 renders successfully end to end.
 
-## 6. Notes this project:
+## 6. Notes about this project:
 
 - Model: **Logistic Regression**, trained on the 15-feature engineered +
   scaled dataset (Notebook 3, best-performing of 5 algorithms × 3 dataset
