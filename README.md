@@ -194,11 +194,10 @@ source venv/bin/activate     # macOS/Linux
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Apply database migrations (db.sqlite3 is already included and seeded,
-#    but this is here in case you start from a clean database)
+# 3. Apply database migrations (in case you start from a clean database)
 python manage.py migrate
 
-# 4. (Optional, only if db.sqlite3 is missing/empty) create an admin account
+# 4. create an admin account
 python manage.py createsuperuser
 
 # 5. (Optional) generate demo prediction records for the dashboard/reports
@@ -210,11 +209,11 @@ python manage.py runserver
 
 Visit **http://127.0.0.1:8000/login/**
 
-### Default login (already seeded in db.sqlite3)
+### Default login (already seeded in student_dropout_prediction.db)
 - **Username:** `admin`
 - **Password:** `admin12345`
 
-> Change this password (or delete `db.sqlite3` and re-create your own
+> Change this password (or re-create your own
 > superuser) before showing this to your panel/adviser if you don't want the
 > default credentials visible in your source.
 
